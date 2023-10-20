@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
-const routes = require("./routes/routes");
+const root = require("./routes/root");
 const db = require("./services/db");
 
 // Configuration de l'application
@@ -13,7 +13,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
 // Définition des routes de l'API
-app.use("/", routes); // Utilisation des routes API définies dans le fichier routes.js
+app.use("/", root); // Utilisation des routes API définies dans le fichier routes.js
 
 // Gestion des erreurs
 app.use((req, res, next) => {
