@@ -2,6 +2,8 @@ require("dotenv").config();
 const express = require("express");
 const bodyParser = require("body-parser");
 const root = require("./routes/root");
+const auth = require("./routes/auth");
+const logout = require("./routes/logout");
 const db = require("./services/db");
 
 // Configuration de l'application
@@ -12,12 +14,28 @@ const port = process.env.PORT || 3000; // Port d'écoute par défaut
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// CORS
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content, Accept, Content-Type, Authorization"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, PATCH, OPTIONS"
+  );
+  next();
+});
+
 // Définition des routes de l'API
-app.use("/", root); // Utilisation des routes API définies dans le fichier routes.js
+app.use("/", root);
+app.use("/logout", logout);
+app.use("/auth", auth);
 
 // Gestion des erreurs
 app.use((req, res, next) => {
-  const erreur = new Error("Not Found");
+  const erreur = new Error("Ressource introuvable. 😣");
   erreur.status = 404;
   next(erreur);
 });
@@ -29,7 +47,6 @@ app.use((erreur, req, res, next) => {
     erreur: erreur,
   });
 });
-
 
 db.on("error", (err) => {
   console.error("Erreur de connexion à la base de données :", err);
