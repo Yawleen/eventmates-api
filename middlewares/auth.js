@@ -14,6 +14,14 @@ const authenticate = async (req, res, next) => {
       return res.status(404).json({ message: "Utilisateur introuvable." });
     }
 
+    if (req.originalUrl === "/reset-password") {
+      if (token !== user.resetToken) {
+        return res
+          .status(404)
+          .json({ message: "Token de réinitialisation incorrect." });
+      }
+    }
+
     req.user = user;
     next();
   } catch (error) {
