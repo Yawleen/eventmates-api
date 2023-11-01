@@ -11,11 +11,20 @@ const userSchema = new mongoose.Schema({
   },
   firstName: {
     type: String,
+    validate: {
+      validator: (value) => /^[a-zA-Z]{2,}$/.test(value),
+      message: "Le prénom doit contenir au moins 2 caractères alphabétiques.",
+    },
     trim: true,
     required: [true, "Saisis ton prénom."],
   },
   lastName: {
     type: String,
+    validate: {
+      validator: (value) => /^[a-zA-Z]{2,}$/.test(value),
+      message:
+        "Le nom de famille doit contenir au moins 2 caractères alphabétiques.",
+    },
     trim: true,
     required: [true, "Saisis ton nom de famille."],
   },
@@ -51,6 +60,7 @@ const userSchema = new mongoose.Schema({
   instagram: { type: String, default: null },
   twitter: { type: String, default: null },
   online: { type: Boolean, default: false },
+  resetToken: { type: String },
 });
 
 module.exports = mongoose.model("Users", userSchema);
