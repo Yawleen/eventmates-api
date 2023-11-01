@@ -4,6 +4,8 @@ const bodyParser = require("body-parser");
 const root = require("./routes/root");
 const auth = require("./routes/auth");
 const logout = require("./routes/logout");
+const forgotPassword = require("./routes/forgotPassword");
+const resetPassword = require("./routes/resetPassword");
 const db = require("./services/db");
 
 // Configuration de l'application
@@ -30,12 +32,14 @@ app.use((req, res, next) => {
 
 // Définition des routes de l'API
 app.use("/", root);
-app.use("/logout", logout);
 app.use("/auth", auth);
+app.use("/logout", logout);
+app.use("/forgot-password", forgotPassword);
+app.use("/reset-password", resetPassword);
 
 // Gestion des erreurs
 app.use((req, res, next) => {
-  const erreur = new Error("Ressource introuvable. 😣");
+  const erreur = new Error("Ressource introuvable.");
   erreur.status = 404;
   next(erreur);
 });

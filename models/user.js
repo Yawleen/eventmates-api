@@ -51,6 +51,7 @@ const userSchema = new mongoose.Schema({
   instagram: { type: String, default: null },
   twitter: { type: String, default: null },
   online: { type: Boolean, default: false },
+  resetToken: { type: String },
 });
 
 module.exports = mongoose.model("Users", userSchema);
