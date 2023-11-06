@@ -6,6 +6,7 @@ const auth = require("./routes/auth");
 const logout = require("./routes/logout");
 const forgotPassword = require("./routes/forgotPassword");
 const resetPassword = require("./routes/resetPassword");
+const events = require("./routes/events");
 const db = require("./services/db");
 
 // Configuration de l'application
@@ -36,6 +37,7 @@ app.use("/auth", auth);
 app.use("/logout", logout);
 app.use("/forgot-password", forgotPassword);
 app.use("/reset-password", resetPassword);
+app.use("/events", events);
 
 // Gestion des erreurs
 app.use((req, res, next) => {
