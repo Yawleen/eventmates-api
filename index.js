@@ -41,16 +41,16 @@ app.use("/events", events);
 
 // Gestion des erreurs
 app.use((req, res, next) => {
-  const erreur = new Error("Ressource introuvable.");
-  erreur.status = 404;
-  next(erreur);
+  const error = new Error("Ressource introuvable.");
+  error.status = 404;
+  next(error);
 });
 
-app.use((erreur, req, res, next) => {
-  res.status(erreur.status || 500);
+app.use((error, req, res, next) => {
+  res.status(error.status || 500);
   res.json({
-    message: erreur.message,
-    erreur: erreur,
+    message: error.message,
+    error,
   });
 });
 

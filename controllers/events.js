@@ -1,7 +1,9 @@
 const Event = require("../models/event");
 
-const getEvents = async (req, res) => {
+const getEvents = async (_, res) => {
   Event.find()
+    .populate("genre")
+    .exec()
     .then((events) => {
       res.status(200).send({
         events,
@@ -12,6 +14,7 @@ const getEvents = async (req, res) => {
         message: "Erreur lors de la récupération des événements.",
         error,
       });
+      console.log(error)
     });
 };
 
