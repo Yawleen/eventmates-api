@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Genres = require("./genre");
+require('./genre');
 
 const eventSchema = new mongoose.Schema({
   eventId: {
@@ -12,7 +12,7 @@ const eventSchema = new mongoose.Schema({
   },
   genre: {
     type: Schema.Types.ObjectId,
-    ref: Genres,
+    ref: "Genres",
   },
   media: [
     {
