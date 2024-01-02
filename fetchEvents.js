@@ -13,12 +13,8 @@ const generateRandomColor = () => {
   const blue = Math.floor(Math.random() * 256);
   const green = Math.floor(Math.random() * 256);
 
-  // Choisissez une teinte de couleur entre violet, rose, rouge et bleu
-  const hues = ["violet", "pink", "red", "blue"];
-  const randomHue = hues[Math.floor(Math.random() * hues.length)];
-
   // Créez la couleur en utilisant une chaîne de modèle CSS
-  const randomColor = `hsl(${randomHue}, ${red}%, ${green}%, ${blue}%)`;
+  const randomColor = `hsl(${red}%, ${green}%, ${blue}%)`;
 
   return randomColor;
 };
