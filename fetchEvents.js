@@ -8,19 +8,13 @@ const Events = require("./models/event");
 const size = 200;
 
 const generateRandomColor = () => {
-  // Choisissez aléatoirement une composante rouge, bleue et verte
-  const red = Math.floor(Math.random() * 256);
-  const blue = Math.floor(Math.random() * 256);
-  const green = Math.floor(Math.random() * 256);
+  const letters = "0123456789ABCDEF";
+  let color = "#";
 
-  // Choisissez une teinte de couleur entre violet, rose, rouge et bleu
-  const hues = ["violet", "pink", "red", "blue"];
-  const randomHue = hues[Math.floor(Math.random() * hues.length)];
-
-  // Créez la couleur en utilisant une chaîne de modèle CSS
-  const randomColor = `hsl(${randomHue}, ${red}%, ${green}%, ${blue}%)`;
-
-  return randomColor;
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
 };
 
 const saveNewEvent = async (event, genre) => {
