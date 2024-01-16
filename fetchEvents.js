@@ -23,12 +23,12 @@ const saveNewEvent = async (event, genre) => {
     name: event?.name,
     genre: genre,
     media: event?.images.map((image) => ({ url: image.url })),
-    ...(event?.promoter && { promoter: event.promoter.name }),
-    ...(event?.promoters && {
-      promoters: event.promoters.map((promoter) => ({
-        name: promoter.name,
-      })),
-    }),
+    // ...(event?.promoter && { promoter: event.promoter.name }),
+    // ...(event?.promoters && {
+    //   promoters: event.promoters.map((promoter) => ({
+    //     name: promoter.name,
+    //   })),
+    // }),
     dates: {
       start: {
         ...(event?.dates?.start?.localDate && {

@@ -20,10 +20,10 @@ const eventSchema = new mongoose.Schema({
       },
     },
   ],
-  promoter: {
-    type: String,
-  },
-  promoters: [{ name: { type: String } }],
+  // promoter: {
+  //   type: String,
+  // },
+  // promoters: [{ name: { type: String } }],
   dates: {
     start: {
       localDate: {
