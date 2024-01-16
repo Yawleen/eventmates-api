@@ -104,6 +104,6 @@ const eventSchema = new mongoose.Schema({
   },
 });
 
-eventSchema.index({ expirationDate: 1 }, { expireAfterSeconds: 0 });
+// eventSchema.index({ expirationDate: 1 }, { expireAfterSeconds: 0 });
 
 module.exports = mongoose.model("Events", eventSchema);
