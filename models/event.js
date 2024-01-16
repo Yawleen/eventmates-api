@@ -13,13 +13,11 @@ const eventSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: "Genres",
   },
-  media: [
-    {
-      url: {
-        type: String,
-      },
+  media: {
+    url: {
+      type: String,
     },
-  ],
+  },
   // promoter: {
   //   type: String,
   // },

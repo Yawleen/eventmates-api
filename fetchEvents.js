@@ -20,9 +20,9 @@ const size = 200;
 const saveNewEvent = async (event, genre) => {
   const newEvent = new Events({
     eventId: event?.id,
-    name: event?.name,
+    name: event?.name?.replace(/\s{2,}/g, " "),
     genre: genre,
-    media: event?.images.map((image) => ({ url: image.url })),
+    media: { url: event?.images[0].url },
     // ...(event?.promoter && { promoter: event.promoter.name }),
     // ...(event?.promoters && {
     //   promoters: event.promoters.map((promoter) => ({
