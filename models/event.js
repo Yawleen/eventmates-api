@@ -14,37 +14,41 @@ const eventSchema = new mongoose.Schema({
     type: Schema.Types.ObjectId,
     ref: "Genres",
   },
-  media: [
-    {
-      url: {
-        type: String,
-      },
+  media: {
+    url: {
+      type: String,
     },
-  ],
-  promoter: {
-    type: String,
   },
-  promoters: [{ name: { type: String } }],
+  // promoter: {
+  //   type: String,
+  // },
+  // promoters: [{ name: { type: String } }],
   dates: {
     start: {
       localDate: {
         type: String,
       },
-      dateTime: {
+      localTime: {
         type: String,
+      },
+      dateTime: {
+        type: Date,
       },
     },
     end: {
       localDate: {
         type: String,
       },
-      dateTime: {
+      localTime: {
         type: String,
+      },
+      dateTime: {
+        type: Date,
       },
     },
   },
   address: {
-    type: String
+    type: String,
   },
   location: {
     longitude: {
@@ -99,6 +103,6 @@ const eventSchema = new mongoose.Schema({
   },
 });
 
-eventSchema.index({ expirationDate: 1 }, { expireAfterSeconds: 0 });
+// eventSchema.index({ expirationDate: 1 }, { expireAfterSeconds: 0 });
 
 module.exports = mongoose.model("Events", eventSchema);
