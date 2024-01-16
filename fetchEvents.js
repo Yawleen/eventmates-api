@@ -7,15 +7,15 @@ const Events = require("./models/event");
 
 const size = 200;
 
-const generateRandomColor = () => {
-  const letters = "0123456789ABCDEF";
-  let color = "#";
+// const generateRandomColor = () => {
+//   const letters = "0123456789ABCDEF";
+//   let color = "#";
 
-  for (var i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-};
+//   for (var i = 0; i < 6; i++) {
+//     color += letters[Math.floor(Math.random() * 16)];
+//   }
+//   return color;
+// };
 
 const saveNewEvent = async (event, genre) => {
   const newEvent = new Events({
@@ -129,7 +129,7 @@ const addNewEvents = (events) => {
       const genreName = classifications[0].genre.name;
       const genre = new Genres({
         name: genreName,
-        color: generateRandomColor(),
+        color: "#A246FF",
       });
 
       genre
