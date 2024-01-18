@@ -3,11 +3,11 @@ const Event = require("../models/event");
 const getEvents = async (req, res) => {
   const page = req.query.page ? req.query.page : 1;
   const limit = 10;
+  const search = req.query.eventName ? { name: new RegExp(["^", req.query.eventName.trim().replace(/\s{2,}/g, " ")].join(""), "i") } : {};
 
-  const count = await Event.countDocuments();
-
-  Event.find()
-    .sort( { "expirationDate": 1 } )
+  const count = await Event.countDocuments(search);
+  
+  Event.find(search)
     .limit(limit)
     .skip((page - 1) * limit)
     .populate("genre")
