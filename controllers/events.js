@@ -1,12 +1,38 @@
 const Event = require("../models/event");
+const Genre = require("../models/genre");
 
 const getEvents = async (req, res) => {
   const page = req.query.page ? req.query.page : 1;
   const limit = 10;
-  const search = req.query.eventName ? { name: new RegExp(["^", req.query.eventName.trim().replace(/\s{2,}/g, " ")].join(""), "i") } : {};
+  let search = {};
+
+  if (req.query.eventName) {
+    search = {
+      name: new RegExp(
+        ["^", req.query.eventName.trim().replace(/\s{2,}/g, " ")].join(""),
+        "i"
+      ),
+    };
+  }
+
+  if (req.query.genres) {
+    search = {
+      ...search,
+      genre: {
+        $in: await Genre.find(
+          {
+            name: {
+              $in: req.query.genres.split(","),
+            },
+          },
+          "_id"
+        ),
+      },
+    };
+  }
 
   const count = await Event.countDocuments(search);
-  
+
   Event.find(search)
     .limit(limit)
     .skip((page - 1) * limit)
@@ -17,7 +43,7 @@ const getEvents = async (req, res) => {
         events,
         nbOfEvents: count,
         currentPage: page,
-        totalPage: Math.ceil(count / limit)
+        totalPage: Math.ceil(count / limit),
       });
     })
     .catch((error) => {
