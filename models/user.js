@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
     validate: {
-      validator: (value) => /^[a-zA-Z]{2,}$/.test(value),
+      validator: (value) => /^[a-zA-ZÀ-ÖØ-öø-ÿ]{2,}$/.test(value),
       message: "Le prénom doit contenir au moins 2 caractères alphabétiques.",
     },
     trim: true,
@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
   lastName: {
     type: String,
     validate: {
-      validator: (value) => /^[a-zA-Z]{2,}$/.test(value),
+      validator: (value) => /^[a-zA-ZÀ-ÖØ-öø-ÿ]{2,}$/.test(value),
       message:
         "Le nom de famille doit contenir au moins 2 caractères alphabétiques.",
     },
