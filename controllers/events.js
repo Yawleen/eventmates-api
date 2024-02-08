@@ -31,6 +31,17 @@ const getEvents = async (req, res) => {
     };
   }
 
+  if (req.query.date) {
+    const selectedDate = new Date(req.query.date);
+    search = {
+      ...search,
+      "dates.start.dateTime": {
+        $gte: selectedDate.setHours(0, 0, 0, 0),
+        $lte: selectedDate.setHours(23, 59, 59, 999),
+      },
+    };
+  }
+
   const count = await Event.countDocuments(search);
 
   Event.find(search)
