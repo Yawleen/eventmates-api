@@ -1,13 +1,50 @@
 const Event = require("../models/event");
+const Genre = require("../models/genre");
 
 const getEvents = async (req, res) => {
   const page = req.query.page ? req.query.page : 1;
   const limit = 10;
+  let search = {};
 
-  const count = await Event.countDocuments();
+  if (req.query.eventName) {
+    search = {
+      name: new RegExp(
+        ["^", req.query.eventName.trim().replace(/\s{2,}/g, " ")].join(""),
+        "i"
+      ),
+    };
+  }
 
-  Event.find()
-    .sort( { "expirationDate": 1 } )
+  if (req.query.genres) {
+    search = {
+      ...search,
+      genre: {
+        $in: await Genre.find(
+          {
+            name: {
+              $in: req.query.genres.split(","),
+            },
+          },
+          "_id"
+        ),
+      },
+    };
+  }
+
+  if (req.query.date) {
+    const selectedDate = new Date(req.query.date);
+    search = {
+      ...search,
+      "dates.start.dateTime": {
+        $gte: selectedDate.setHours(0, 0, 0, 0),
+        $lte: selectedDate.setHours(23, 59, 59, 999),
+      },
+    };
+  }
+
+  const count = await Event.countDocuments(search);
+
+  Event.find(search)
     .limit(limit)
     .skip((page - 1) * limit)
     .populate("genre")
@@ -17,7 +54,7 @@ const getEvents = async (req, res) => {
         events,
         nbOfEvents: count,
         currentPage: page,
-        totalPage: Math.ceil(count / limit)
+        totalPage: Math.ceil(count / limit),
       });
     })
     .catch((error) => {

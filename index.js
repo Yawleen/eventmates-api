@@ -7,6 +7,7 @@ const logout = require("./routes/logout");
 const forgotPassword = require("./routes/forgotPassword");
 const resetPassword = require("./routes/resetPassword");
 const events = require("./routes/events");
+const genres = require("./routes/genres");
 const db = require("./services/db");
 
 // Configuration de l'application
@@ -38,6 +39,7 @@ app.use("/logout", logout);
 app.use("/forgot-password", forgotPassword);
 app.use("/reset-password", resetPassword);
 app.use("/events", events);
+app.use("/genres", genres);
 
 // Gestion des erreurs
 app.use((req, res, next) => {
