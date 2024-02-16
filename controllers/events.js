@@ -53,7 +53,14 @@ const getEvents = async (req, res) => {
         sort = { "priceRanges.min": -1, _id: -1 };
         break;
 
-        
+      case "ascStartDate":
+        sort = { "dates.start.dateTime": 1, _id: -1 };
+        break;
+
+      case "descStartDate":
+        sort = { "dates.start.dateTime": -1, _id: -1 };
+        break;
+
       default:
         break;
     }
