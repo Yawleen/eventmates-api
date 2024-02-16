@@ -51,4 +51,37 @@ const addUserEvent = async (req, res) => {
   });
 };
 
-module.exports = { addUserEvent };
+const isAnUserEvent = async (req, res) => {
+  const { userId, eventId } = req.query;
+
+  if (userId && eventId) {
+    UserEvents.findOne({ user: userId, events: eventId })
+      .exec()
+      .then((userEvent) => {
+        if (userEvent) {
+          res.status(200).send({
+            isParticipant: true,
+          });
+          return;
+        }
+
+        res.status(500).send({
+          isParticipant: false,
+        });
+      })
+      .catch(() => {
+        res.status(500).send({
+          isParticipant: false,
+          message: "Impossible de vérifier la participation à l'événement.",
+        });
+      });
+    return;
+  }
+
+  res.status(500).send({
+    isParticipant: false,
+    message: "Impossible de vérifier la participation à l'événement.",
+  });
+};
+
+module.exports = { addUserEvent, isAnUserEvent };
