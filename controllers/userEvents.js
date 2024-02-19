@@ -38,7 +38,7 @@ const addUserEvent = async (req, res) => {
       })
       .catch((error) => {
         res.status(400).send({
-          message: "Aucun utilisateur n'a été retrouvé.",
+          message: "Aucun utilisateur n'a été trouvé.",
           error,
         });
       });
@@ -69,19 +69,60 @@ const isAnUserEvent = async (req, res) => {
           isParticipant: false,
         });
       })
-      .catch(() => {
+      .catch((error) => {
         res.status(500).send({
-          isParticipant: false,
-          message: "Impossible de vérifier la participation à l'événement.",
+          message: "Impossible de vérifier ta participation à l'événement.",
+          error,
         });
       });
     return;
   }
 
   res.status(500).send({
-    isParticipant: false,
-    message: "Impossible de vérifier la participation à l'événement.",
+    message: "Impossible de vérifier ta participation à l'événement.",
   });
 };
 
-module.exports = { addUserEvent, isAnUserEvent };
+const deleteUserEvent = async (req, res) => {
+  const { userId, eventId } = req.body;
+
+  if (userId && eventId) {
+    UserEvents.findOne({ user: userId })
+      .then((user) => {
+        if (!user) {
+          res.status(500).send({
+            success: false,
+            message: "Aucun utilisateur n'a été trouvé.",
+          });
+          return;
+        }
+
+        const updatedEvents = user.events.filter(
+          (event) => event.toString() !== eventId
+        );
+
+        user.events = updatedEvents;
+        user.save().then(() =>
+          res.status(200).send({
+            success: true,
+            message: "Tu ne participes plus à cet événement.",
+          })
+        );
+      })
+      .catch((error) => {
+        res.status(500).send({
+          success: false,
+          message: "Impossible de prendre en compte ta demande de suppression.",
+          error,
+        });
+      });
+    return;
+  }
+
+  res.status(500).send({
+    success: false,
+    message: "Impossible de prendre en compte ta demande de suppression.",
+  });
+};
+
+module.exports = { addUserEvent, isAnUserEvent, deleteUserEvent };
