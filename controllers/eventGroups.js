@@ -1,7 +1,7 @@
 const EventGroup = require("../models/eventGroups");
 
 const addEventGroup = async (req, res) => {
-  const { eventId, userId, name, description, maxCapacity } = req.query;
+  const { eventId, userId, name, description, maxCapacity } = req.body;
 
   if (userId && eventId && name && description && maxCapacity) {
     EventGroup.findOne({ event: eventId, creator: userId }).then((group) => {
@@ -68,4 +68,38 @@ const addEventGroup = async (req, res) => {
   });
 };
 
-module.exports = { addEventGroup };
+const isUserInGroup = async (req, res) => {
+  const { userId, eventId } = req.query;
+
+  if (userId && eventId) {
+    EventGroup.findOne({
+      event: eventId,
+      users: userId,
+    })
+      .then((userGroup) => {
+        if (userGroup) {
+          res.status(200).send({
+            isMember: true,
+          });
+          return;
+        }
+
+        res.status(500).send({
+          isMember: false,
+        });
+      })
+      .catch((error) => {
+        res.status(500).send({
+          message: "Impossible de vérifier ton appartenance à un groupe.",
+          error,
+        });
+      });
+    return;
+  }
+
+  res.status(500).send({
+    message: "Impossible de vérifier ton appartenance à un groupe.",
+  });
+};
+
+module.exports = { addEventGroup, isUserInGroup };

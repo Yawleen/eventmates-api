@@ -14,28 +14,26 @@ const eventGroupsSchema = new mongoose.Schema({
   },
   name: {
     type: String,
-    maxlength: 50,
-    unique: true,
+    maxlength: [50, "Le nom de groupe ne peut pas dépasser 50 caractères."],
     required: [true, "Saisis un nom de groupe"],
   },
   maxCapacity: {
     type: Number,
     validate: {
-      validator: (value) => value <= 8,
+      validator: (value) => value < 8,
       message: "La capacité maximale est de 8 personnes.",
     },
     required: [true, "Sélectionne une capacité maximale."],
   },
   description: {
     type: String,
-    maxlength: 280,
+    maxlength: [280, "La description ne peut pas dépasser 280 caractères."],
     required: [true, "Saisis une description."],
   },
   users: [
     {
       type: Schema.Types.ObjectId,
       ref: "Users",
-      unique: true,
     },
   ],
 });

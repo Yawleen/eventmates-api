@@ -11,6 +11,7 @@ const genres = require("./routes/genres");
 const userEvents = require("./routes/userEvents");
 const isAnUserEvent = require("./routes/isAnUserEvent");
 const eventGroups = require("./routes/eventGroups");
+const isUserInGroup = require("./routes/isUserInGroup")
 const db = require("./services/db");
 
 // Configuration de l'application
@@ -46,6 +47,7 @@ app.use("/genres", genres);
 app.use("/user-events", userEvents);
 app.use("/is-an-user-event", isAnUserEvent);
 app.use("/event-groups", eventGroups);
+app.use("/is-user-in-group", isUserInGroup);
 
 // Gestion des erreurs
 app.use((req, res, next) => {
