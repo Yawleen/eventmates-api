@@ -97,12 +97,10 @@ const eventSchema = new mongoose.Schema({
   url: {
     type: String,
   },
-  // expirationDate: {
-  //   type: Date,
-  //   expires: 0,
-  // },
+  expirationDate: {
+    type: Date,
+    // expires: 0,
+  },
 });
-
-// eventSchema.index({ expirationDate: 1 }, { expireAfterSeconds: 0 });
 
 module.exports = mongoose.model("Events", eventSchema);

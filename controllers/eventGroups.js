@@ -102,4 +102,45 @@ const isUserInGroup = async (req, res) => {
   });
 };
 
-module.exports = { addEventGroup, isUserInGroup };
+const getEventGroups = async (req, res) => {
+  const page = req.query.page ? req.query.page : 1;
+  const limit = 10;
+
+  if (req.query.eventId && req.query.userId) {
+    const selectedEvent = {
+      event: req.query.eventId,
+    };
+    const userId = req.query.userId;
+
+    const userGroup = await EventGroup.findOne({
+      ...selectedEvent,
+      creator: userId,
+    }).populate("event creator users");
+
+    const count = await EventGroup.countDocuments(selectedEvent);
+
+    const otherGroups = await EventGroup.find({
+      ...selectedEvent,
+      creator: { $ne: userId },
+    })
+      .limit(limit - 1)
+      .skip((page - 1) * limit)
+      .populate("event creator users");
+
+    const groups = userGroup ? [userGroup, ...otherGroups] : otherGroups;
+
+    res.status(200).send({
+      groups,
+      nbOfGroups: count,
+      currentPage: page,
+      totalPage: Math.ceil(count / limit),
+    });
+    return;
+  }
+
+  res.status(500).send({
+    message: "Impossible de récupérer les groupes créés pour cet événement.",
+  });
+};
+
+module.exports = { addEventGroup, isUserInGroup, getEventGroups };
