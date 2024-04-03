@@ -20,8 +20,9 @@ const eventGroupsSchema = new mongoose.Schema({
   maxCapacity: {
     type: Number,
     validate: {
-      validator: (value) => value < 8,
-      message: "La capacité maximale est de 8 personnes.",
+      validator: (value) => value >= 2 && value <= 8,
+      message:
+        "La capacité maximale de personnes doit être comprise entre 2 et 8.",
     },
     required: [true, "Sélectionne une capacité maximale."],
   },
