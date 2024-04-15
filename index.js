@@ -8,6 +8,8 @@ const forgotPassword = require("./routes/forgotPassword");
 const resetPassword = require("./routes/resetPassword");
 const events = require("./routes/events");
 const genres = require("./routes/genres");
+const userEvents = require("./routes/userEvents");
+const isAnUserEvent = require("./routes/isAnUserEvent");
 const db = require("./services/db");
 
 // Configuration de l'application
@@ -40,6 +42,8 @@ app.use("/forgot-password", forgotPassword);
 app.use("/reset-password", resetPassword);
 app.use("/events", events);
 app.use("/genres", genres);
+app.use("/user-events", userEvents);
+app.use("/is-an-user-event", isAnUserEvent);
 
 // Gestion des erreurs
 app.use((req, res, next) => {
