@@ -87,7 +87,6 @@ const getEvents = async (req, res) => {
         message: "Erreur lors de la récupération des événements.",
         error,
       });
-      console.log(error);
     });
 };
 

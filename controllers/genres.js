@@ -12,7 +12,6 @@ const getGenres = async (_, res) => {
         message: "Erreur lors de la récupération des genres.",
         error,
       });
-      console.log(error);
     });
 };
 
