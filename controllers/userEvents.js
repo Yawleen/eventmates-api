@@ -3,10 +3,10 @@ const User = require("../models/user");
 const Event = require("../models/event");
 
 const addUserEvent = async (req, res) => {
-  const { userId, eventId } = req.body;
+  const { eventId } = req.body;
 
-  if (userId && eventId) {
-    User.findOne({ _id: userId })
+  if (eventId) {
+    User.findOne({ _id: req.user._id })
       .then((user) => {
         Event.findOne({ _id: eventId })
           .then((event) => {
@@ -52,10 +52,10 @@ const addUserEvent = async (req, res) => {
 };
 
 const isAnUserEvent = async (req, res) => {
-  const { userId, eventId } = req.query;
+  const { eventId } = req.query;
 
-  if (userId && eventId) {
-    UserEvents.findOne({ user: userId, events: eventId })
+  if (eventId) {
+    UserEvents.findOne({ user: req.user._id, events: eventId })
       .exec()
       .then((userEvent) => {
         if (userEvent) {
@@ -84,10 +84,10 @@ const isAnUserEvent = async (req, res) => {
 };
 
 const deleteUserEvent = async (req, res) => {
-  const { userId, eventId } = req.body;
+  const { eventId } = req.body;
 
-  if (userId && eventId) {
-    UserEvents.findOne({ user: userId })
+  if (eventId) {
+    UserEvents.findOne({ user: req.user._id })
       .then((user) => {
         if (!user) {
           res.status(500).send({
