@@ -5,6 +5,7 @@ const getEvents = async (req, res) => {
   const page = req.query.page ? req.query.page : 1;
   const limit = 10;
   let search = {};
+  let sort = { "priceRanges.min": 1, _id: 1 };
 
   if (req.query.eventName) {
     search = {
@@ -42,11 +43,35 @@ const getEvents = async (req, res) => {
     };
   }
 
+  if (req.query.sort) {
+    switch (req.query.sort) {
+      case "ascPrice":
+        sort = { "priceRanges.min": 1, _id: 1 };
+        break;
+
+      case "descPrice":
+        sort = { "priceRanges.min": -1, _id: -1 };
+        break;
+
+      case "ascStartDate":
+        sort = { "dates.start.dateTime": 1, _id: -1 };
+        break;
+
+      case "descStartDate":
+        sort = { "dates.start.dateTime": -1, _id: -1 };
+        break;
+
+      default:
+        break;
+    }
+  }
+
   const count = await Event.countDocuments(search);
 
   Event.find(search)
-    .limit(limit)
+    .sort(sort)
     .skip((page - 1) * limit)
+    .limit(limit)
     .populate("genre")
     .exec()
     .then((events) => {
