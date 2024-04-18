@@ -46,10 +46,35 @@ const register = async (req, res) => {
           });
         })
         .catch((error) => {
-          res.status(500).send({
-            message: "Ton compte n'a pas pu être créé.",
-            error,
-          });
+          if (error.code === 11000) {
+            switch (Object.keys(error.keyPattern)[0]) {
+              case "username":
+                res.status(500).send({
+                  message: "Le pseudo saisi existe déjà.",
+                  error,
+                });
+                break;
+
+              case "email":
+                res.status(500).send({
+                  message: "L'adresse mail saisie existe déjà.",
+                  error,
+                });
+                break;
+
+              default:
+                res.status(500).send({
+                  message: "Ton compte n'a pas pu être créé.",
+                  error,
+                });
+                break;
+            }
+          } else {
+            res.status(500).send({
+              message: "Ton compte n'a pas pu être créé.",
+              error,
+            });
+          }
         });
     })
     .catch((error) => {
