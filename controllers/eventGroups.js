@@ -201,9 +201,41 @@ const updateEventGroup = async (req, res) => {
   });
 };
 
+const deleteEventGroup = async (req, res) => {
+  const { eventId } = req.body;
+
+  if (eventId) {
+    EventGroup.findOneAndDelete({
+      event: eventId,
+      creator: req.user._id,
+    })
+      .then((deletedGroup) => {
+        res.status(500).send({
+          success: true,
+          message: `Ton groupe ${deletedGroup.name} a bien été supprimé.`,
+        });
+      })
+      .catch((error) => {
+        res.status(500).send({
+          success: false,
+          message:
+            "Un problème s'est produit lors de la suppression du groupe.",
+          error,
+        });
+      });
+    return;
+  }
+
+  res.status(500).send({
+    success: false,
+    message: "Un problème s'est produit lors de la suppression du groupe.",
+  });
+};
+
 module.exports = {
   addEventGroup,
   isUserInGroup,
   getEventGroups,
   updateEventGroup,
+  deleteEventGroup,
 };
