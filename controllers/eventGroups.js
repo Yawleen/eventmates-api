@@ -153,6 +153,7 @@ const getEventGroups = async (req, res) => {
     const otherGroups = await EventGroup.find({
       ...selectedEvent,
       creator: { $ne: req.user._id },
+      bannedUsers: { $ne: req.user._id },
     })
       .limit(limit - 1)
       .skip((page - 1) * limit)
