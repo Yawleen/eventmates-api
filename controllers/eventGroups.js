@@ -298,6 +298,42 @@ const kickUser = async (req, res) => {
   });
 };
 
+const banUser = async (req, res) => {
+  const { eventId, userToBanId } = req.body;
+
+  if (eventId && userToBanId) {
+    EventGroup.findOneAndUpdate(
+      { creator: req.user._id, event: eventId, users: userToBanId },
+      { $pull: { users: userToBanId }, $addToSet: { bannedUsers: userToBanId }}
+    )
+      .populate("users")
+      .exec()
+      .then((eventGroup) => {
+        res.status(200).send({
+          success: true,
+          message: `${
+            eventGroup.users.find((user) => user._id.toString() == userToBanId)
+              .username
+          } a bien été banni(e) de ton groupe.`,
+        });
+      })
+      .catch((error) => {
+        res.status(500).send({
+          success: false,
+          message:
+            "Une erreur est survenue lors de la tentative de bannissement de l'utilisateur.",
+          error,
+        });
+      });
+    return;
+  }
+
+  res.status(500).send({
+    success: false,
+    message: "Impossible de bannir l'utilisateur sélectionné.",
+  });
+};
+
 module.exports = {
   addEventGroup,
   isUserInGroup,
@@ -306,4 +342,5 @@ module.exports = {
   deleteEventGroup,
   kickUser,
   getEventGroup,
+  banUser
 };

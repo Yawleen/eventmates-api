@@ -37,6 +37,12 @@ const eventGroupsSchema = new mongoose.Schema({
       ref: "Users",
     },
   ],
+  bannedUsers: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Users",
+    },
+  ],
 });
 
 module.exports = mongoose.model("EventsGroups", eventGroupsSchema);
