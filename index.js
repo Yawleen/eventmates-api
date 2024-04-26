@@ -14,6 +14,7 @@ const eventGroups = require("./routes/eventGroups");
 const isUserInGroup = require("./routes/isUserInGroup");
 const kickUser = require("./routes/kickUser");
 const eventGroup = require("./routes/eventGroup");
+const banUser = require("./routes/banUser");
 const db = require("./services/db");
 
 // Configuration de l'application
@@ -52,6 +53,7 @@ app.use("/event-groups", eventGroups);
 app.use("/is-user-in-group", isUserInGroup);
 app.use("/kick-user", kickUser);
 app.use("/event-group", eventGroup);
+app.use("/ban-user", banUser);
 
 // Gestion des erreurs
 app.use((req, res, next) => {
