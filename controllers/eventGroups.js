@@ -105,12 +105,11 @@ const isUserInGroup = async (req, res) => {
 };
 
 const getEventGroup = async (req, res) => {
-  const { eventId } = req.query;
+  const { eventGroupId } = req.query;
 
-  if (eventId) {
+  if (eventGroupId) {
     EventGroup.findOne({
-      event: eventId,
-      creator: req.user._id,
+      _id: eventGroupId,
     })
       .populate("event creator users")
       .exec()
