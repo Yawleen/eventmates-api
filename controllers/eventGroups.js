@@ -104,6 +104,36 @@ const isUserInGroup = async (req, res) => {
   });
 };
 
+const getEventGroup = async (req, res) => {
+  const { eventId } = req.query;
+
+  if (eventId) {
+    EventGroup.findOne({
+      event: eventId,
+      creator: req.user._id,
+    })
+      .populate("event creator users")
+      .exec()
+      .then((eventGroup) => {
+        res.status(200).send({
+          groupInfo: eventGroup,
+        });
+      })
+      .catch((error) => {
+        res.status(500).send({
+          message:
+            "Un problème s'est produit lors de la récupération des informations du groupe.",
+          error,
+        });
+      });
+    return;
+  }
+
+  res.status(500).send({
+    message: "Impossible de récupérer les informations du groupe.",
+  });
+};
+
 const getEventGroups = async (req, res) => {
   const page = req.query.page ? req.query.page : 1;
   const limit = 10;
@@ -264,8 +294,7 @@ const kickUser = async (req, res) => {
 
   res.status(500).send({
     success: false,
-    message:
-      "Impossible d'exclure l'utilisateur sélectionné.",
+    message: "Impossible d'exclure l'utilisateur sélectionné.",
   });
 };
 
@@ -276,4 +305,5 @@ module.exports = {
   updateEventGroup,
   deleteEventGroup,
   kickUser,
+  getEventGroup,
 };
