@@ -105,19 +105,16 @@ const isUserInGroup = async (req, res) => {
 };
 
 const getEventGroup = async (req, res) => {
-  const { eventId } = req.query;
+  const { eventGroupId } = req.query;
 
-  if (eventId) {
+  if (eventGroupId) {
     EventGroup.findOne({
-      event: eventId,
-      creator: req.user._id,
+      _id: eventGroupId,
     })
       .populate("event creator users")
       .exec()
       .then((eventGroup) => {
-        res.status(200).send({
-          groupInfo: eventGroup,
-        });
+        res.status(200).send({});
       })
       .catch((error) => {
         res.status(500).send({
@@ -305,7 +302,7 @@ const banUser = async (req, res) => {
   if (eventId && userToBanId) {
     EventGroup.findOneAndUpdate(
       { creator: req.user._id, event: eventId, users: userToBanId },
-      { $pull: { users: userToBanId }, $addToSet: { bannedUsers: userToBanId }}
+      { $pull: { users: userToBanId }, $addToSet: { bannedUsers: userToBanId } }
     )
       .populate("users")
       .exec()
@@ -343,5 +340,5 @@ module.exports = {
   deleteEventGroup,
   kickUser,
   getEventGroup,
-  banUser
+  banUser,
 };
