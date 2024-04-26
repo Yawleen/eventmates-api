@@ -232,10 +232,48 @@ const deleteEventGroup = async (req, res) => {
   });
 };
 
+const kickUser = async (req, res) => {
+  const { eventId, userToKickId } = req.body;
+
+  if (eventId && userToKickId) {
+    EventGroup.findOneAndUpdate(
+      { creator: req.user._id, event: eventId, users: userToKickId },
+      { $pull: { users: userToKickId } }
+    )
+      .populate("users")
+      .exec()
+      .then((eventGroup) => {
+        res.status(200).send({
+          success: true,
+          message: `${
+            eventGroup.users.find((user) => user._id.toString() == userToKickId)
+              .username
+          } a bien été exclu(e) de ton groupe.`,
+        });
+      })
+      .catch((error) => {
+        res.status(500).send({
+          success: false,
+          message:
+            "Une erreur est survenue lors de la tentative d'exclusion de l'utilisateur.",
+          error,
+        });
+      });
+    return;
+  }
+
+  res.status(500).send({
+    success: false,
+    message:
+      "Impossible d'exclure l'utilisateur sélectionné.",
+  });
+};
+
 module.exports = {
   addEventGroup,
   isUserInGroup,
   getEventGroups,
   updateEventGroup,
   deleteEventGroup,
+  kickUser,
 };
