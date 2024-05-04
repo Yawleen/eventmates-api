@@ -388,6 +388,41 @@ const joinEventGroup = async (req, res) => {
   });
 };
 
+const leaveEventGroup = async (req, res) => {
+  const { eventGroupId } = req.body;
+
+  if (eventGroupId) {
+    EventGroup.findOneAndUpdate(
+      {
+        _id: eventGroupId,
+        creator: { $ne: req.user._id },
+        users: req.user._id,
+      },
+      { $pull: { users: req.user._id } }
+    )
+      .then((eventGroup) => {
+        res.status(200).send({
+          success: true,
+          message: `Tu as bien quitté le groupe ${eventGroup.name}.`,
+        });
+      })
+      .catch((error) => {
+        res.status(500).send({
+          success: false,
+          message:
+            "Un problème est survenu lors de la tentative de sortie du groupe.",
+          error,
+        });
+      });
+    return;
+  }
+
+  res.status(500).send({
+    success: false,
+    message: "Impossible d'effectuer cette action.",
+  });
+};
+
 module.exports = {
   addEventGroup,
   isUserInGroup,
@@ -398,4 +433,5 @@ module.exports = {
   getEventGroup,
   banUser,
   joinEventGroup,
+  leaveEventGroup,
 };
