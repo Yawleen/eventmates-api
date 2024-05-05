@@ -142,8 +142,6 @@ const getEventGroups = async (req, res) => {
       event: req.query.eventId,
     };
 
-    const count = await EventGroup.countDocuments(selectedEvent);
-
     const userGroup = await EventGroup.findOne({
       ...selectedEvent,
       creator: req.user._id,
@@ -168,9 +166,9 @@ const getEventGroups = async (req, res) => {
 
     res.status(200).send({
       groups,
-      nbOfGroups: count,
+      nbOfGroups: groups.length,
       currentPage: page,
-      totalPage: Math.ceil(count / limit),
+      totalPage: Math.ceil(groups.length / limit),
     });
     return;
   }
