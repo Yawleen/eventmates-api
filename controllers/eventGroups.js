@@ -142,12 +142,12 @@ const getEventGroups = async (req, res) => {
       event: req.query.eventId,
     };
 
+    const count = await EventGroup.countDocuments(selectedEvent);
+
     const userGroup = await EventGroup.findOne({
       ...selectedEvent,
       creator: req.user._id,
     }).populate("event creator users");
-
-    const count = await EventGroup.countDocuments(selectedEvent);
 
     const otherGroups = await EventGroup.find({
       ...selectedEvent,
@@ -158,7 +158,13 @@ const getEventGroups = async (req, res) => {
       .skip((page - 1) * limit)
       .populate("event creator users");
 
-    const groups = userGroup ? [userGroup, ...otherGroups] : otherGroups;
+    const availableGroups = otherGroups.filter(
+      (group) => group.users.length < group.maxCapacity
+    );
+
+    const groups = userGroup
+      ? [userGroup, ...availableGroups]
+      : availableGroups;
 
     res.status(200).send({
       groups,
