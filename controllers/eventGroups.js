@@ -353,21 +353,40 @@ const joinEventGroup = async (req, res) => {
           return;
         }
 
-        EventGroup.findOneAndUpdate(
-          { _id: eventGroupId },
-          { $addToSet: { users: req.user._id } }
-        )
+        EventGroup.findOne({ _id: eventGroupId })
           .then((eventGroup) => {
-            res.status(200).send({
-              success: true,
-              message: `Tu fais désormais partie du groupe ${eventGroup.name}.`,
-            });
+            if (eventGroup.users.length + 1 > eventGroup.maxCapacity) {
+              res.status(500).send({
+                success: false,
+                message: "Ce groupe a atteint sa capacité maximale.",
+              });
+              return;
+            }
+
+            const updatedUsers = [...eventGroup.users, req.user._id];
+
+            eventGroup.users = updatedUsers;
+
+            eventGroup
+              .save()
+              .then(() => {
+                res.status(200).send({
+                  success: true,
+                  message: `Tu fais désormais partie du groupe ${eventGroup.name}.`,
+                });
+              })
+              .catch((error) => {
+                res.status(500).send({
+                  success: false,
+                  message:
+                    "Un problème s'est produit lors de la tentative d'adhésion au groupe.",
+                  error,
+                });
+              });
           })
           .catch((error) => {
             res.status(500).send({
-              success: false,
-              message:
-                "Un problème s'est produit lors de la tentative d'adhésion au groupe.",
+              message: "Aucun groupe d'événement n'a été trouvé.",
               error,
             });
           });
