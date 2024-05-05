@@ -86,7 +86,7 @@ const isUserInGroup = async (req, res) => {
           return;
         }
 
-        res.status(500).send({
+        res.status(200).send({
           isMember: false,
         });
       })
@@ -304,7 +304,7 @@ const banUser = async (req, res) => {
   if (eventId && userToBanId) {
     EventGroup.findOneAndUpdate(
       { creator: req.user._id, event: eventId, users: userToBanId },
-      { $pull: { users: userToBanId }, $addToSet: { bannedUsers: userToBanId }}
+      { $pull: { users: userToBanId }, $addToSet: { bannedUsers: userToBanId } }
     )
       .populate("users")
       .exec()
@@ -334,6 +334,95 @@ const banUser = async (req, res) => {
   });
 };
 
+const joinEventGroup = async (req, res) => {
+  const { eventGroupId, eventId } = req.body;
+
+  if (eventGroupId && eventId) {
+    EventGroup.findOne({
+      event: eventId,
+      users: req.user._id,
+    })
+      .populate("event")
+      .exec()
+      .then((userGroup) => {
+        if (userGroup) {
+          res.status(500).send({
+            success: false,
+            message: `Tu fais déjà partie du groupe ${userGroup.name} pour l'événement ${userGroup.event.name}.`,
+          });
+          return;
+        }
+
+        EventGroup.findOneAndUpdate(
+          { _id: eventGroupId },
+          { $addToSet: { users: req.user._id } }
+        )
+          .then((eventGroup) => {
+            res.status(200).send({
+              success: true,
+              message: `Tu fais désormais partie du groupe ${eventGroup.name}.`,
+            });
+          })
+          .catch((error) => {
+            res.status(500).send({
+              success: false,
+              message:
+                "Un problème s'est produit lors de la tentative d'adhésion au groupe.",
+              error,
+            });
+          });
+      })
+      .catch((error) => {
+        res.status(500).send({
+          message: "Impossible de vérifier ton appartenance à un groupe.",
+          error,
+        });
+      });
+    return;
+  }
+
+  res.status(500).send({
+    success: false,
+    message:
+      "Un problème s'est produit lors de la tentative d'adhésion au groupe.",
+  });
+};
+
+const leaveEventGroup = async (req, res) => {
+  const { eventGroupId } = req.body;
+
+  if (eventGroupId) {
+    EventGroup.findOneAndUpdate(
+      {
+        _id: eventGroupId,
+        creator: { $ne: req.user._id },
+        users: req.user._id,
+      },
+      { $pull: { users: req.user._id } }
+    )
+      .then((eventGroup) => {
+        res.status(200).send({
+          success: true,
+          message: `Tu as bien quitté le groupe ${eventGroup.name}.`,
+        });
+      })
+      .catch((error) => {
+        res.status(500).send({
+          success: false,
+          message:
+            "Un problème est survenu lors de la tentative de sortie du groupe.",
+          error,
+        });
+      });
+    return;
+  }
+
+  res.status(500).send({
+    success: false,
+    message: "Impossible d'effectuer cette action.",
+  });
+};
+
 module.exports = {
   addEventGroup,
   isUserInGroup,
@@ -342,5 +431,7 @@ module.exports = {
   deleteEventGroup,
   kickUser,
   getEventGroup,
-  banUser
+  banUser,
+  joinEventGroup,
+  leaveEventGroup,
 };
