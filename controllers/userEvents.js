@@ -91,7 +91,6 @@ const deleteUserEvent = async (req, res) => {
       .then((user) => {
         if (!user) {
           res.status(500).send({
-            success: false,
             message: "Aucun utilisateur n'a été trouvé.",
           });
           return;
