@@ -66,7 +66,7 @@ const isAnUserEvent = async (req, res) => {
           return;
         }
 
-        res.status(500).send({
+        res.status(200).send({
           isParticipant: false,
         });
       })
