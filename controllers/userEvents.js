@@ -1,6 +1,7 @@
 const UserEvents = require("../models/userEvents");
 const User = require("../models/user");
 const Event = require("../models/event");
+const EventGroup = require("../models/eventGroups");
 
 const addUserEvent = async (req, res) => {
   const { eventId } = req.body;
@@ -87,27 +88,129 @@ const deleteUserEvent = async (req, res) => {
   const { eventId } = req.body;
 
   if (eventId) {
-    UserEvents.findOne({ user: req.user._id })
+    UserEvents.findOne({ user: req.user._id, events: eventId })
       .then((user) => {
         if (!user) {
           res.status(500).send({
             success: false,
-            message: "Aucun utilisateur n'a été trouvé.",
+            message: "Tu ne participes pas à cet événement.",
           });
           return;
         }
 
-        const updatedEvents = user.events.filter(
-          (event) => event.toString() !== eventId
-        );
+        EventGroup.findOne({
+          event: eventId,
+          users: req.user._id,
+        })
+          .then((userGroup) => {
+            if (userGroup) {
+              if (req.user._id == userGroup.creator._id) {
+                EventGroup.deleteOne({
+                  _id: userGroup._id,
+                })
+                  .then(() => {
+                    const updatedEvents = user.events.filter(
+                      (event) => event.toString() !== eventId
+                    );
 
-        user.events = updatedEvents;
-        user.save().then(() =>
-          res.status(200).send({
-            success: true,
-            message: "Tu ne participes plus à cet événement.",
+                    user.events = updatedEvents;
+                    user
+                      .save()
+                      .then(() =>
+                        res.status(200).send({
+                          success: true,
+                          message: `Tu ne participes plus à cet événement et ton groupe ${userGroup.name} a été supprimé.`,
+                        })
+                      )
+                      .catch((error) => {
+                        res.status(500).send({
+                          success: false,
+                          message:
+                            "Impossible de prendre en compte ta demande de suppression.",
+                          error,
+                        });
+                      });
+                  })
+                  .catch((error) => {
+                    res.status(500).send({
+                      success: false,
+                      message:
+                        "Un problème s'est produit lors de la suppression du groupe.",
+                      error,
+                    });
+                  });
+                return;
+              }
+
+              const updatedUsers = userGroup.users.filter(
+                (user) => user.toString() !== req.user._id
+              );
+
+              userGroup.users = updatedUsers;
+              userGroup
+                .save()
+                .then(() => {
+                  const updatedEvents = user.events.filter(
+                    (event) => event.toString() !== eventId
+                  );
+
+                  user.events = updatedEvents;
+                  user
+                    .save()
+                    .then(() =>
+                      res.status(200).send({
+                        success: true,
+                        message: `Tu ne participes plus à cet événement et tu ne fais plus partie du groupe ${userGroup.name}.`,
+                      })
+                    )
+                    .catch((error) => {
+                      res.status(500).send({
+                        success: false,
+                        message:
+                          "Impossible de prendre en compte ta demande de suppression.",
+                        error,
+                      });
+                    });
+                })
+                .catch((error) => {
+                  res.status(500).send({
+                    success: false,
+                    message:
+                      "Impossible de prendre en compte ta demande de suppression.",
+                    error,
+                  });
+                });
+              return;
+            }
+
+            const updatedEvents = user.events.filter(
+              (event) => event.toString() !== eventId
+            );
+
+            user.events = updatedEvents;
+            user
+              .save()
+              .then(() =>
+                res.status(200).send({
+                  success: true,
+                  message: "Tu ne participes plus à cet événement.",
+                })
+              )
+              .catch((error) => {
+                res.status(500).send({
+                  success: false,
+                  message:
+                    "Impossible de prendre en compte ta demande de suppression.",
+                  error,
+                });
+              });
           })
-        );
+          .catch((error) => {
+            res.status(500).send({
+              message: "Impossible de vérifier ton appartenance à un groupe.",
+              error,
+            });
+          });
       })
       .catch((error) => {
         res.status(500).send({
