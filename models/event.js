@@ -101,6 +101,10 @@ const eventSchema = new mongoose.Schema({
     type: Date,
     // expires: 0,
   },
+  createdGroupsTotal: {
+    type: Number,
+    default: 0
+  }
 });
 
 module.exports = mongoose.model("Events", eventSchema);
