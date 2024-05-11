@@ -1,4 +1,5 @@
 const EventGroup = require("../models/eventGroups");
+const Event = require("../models/event");
 
 const addEventGroup = async (req, res) => {
   const { eventId, name, description, maxCapacity } = req.body;
@@ -27,22 +28,35 @@ const addEventGroup = async (req, res) => {
               return;
             }
 
-            const newEventGroup = new EventGroup({
-              event: eventId,
-              creator: req.user._id,
-              name,
-              maxCapacity,
-              description,
-              users: [req.user._id],
-            });
-
-            newEventGroup
-              .save()
-              .then((createdGroup) => {
-                res.status(200).send({
-                  success: true,
-                  message: `Ton groupe ${createdGroup.name} a bien été créé.`,
+            Event.findOneAndUpdate(
+              { _id: eventId },
+              { $inc: { createdGroupsTotal: 1 } }
+            )
+              .then(() => {
+                const newEventGroup = new EventGroup({
+                  event: eventId,
+                  creator: req.user._id,
+                  name,
+                  maxCapacity,
+                  description,
+                  users: [req.user._id],
                 });
+
+                newEventGroup
+                  .save()
+                  .then((createdGroup) => {
+                    res.status(200).send({
+                      success: true,
+                      message: `Ton groupe ${createdGroup.name} a bien été créé.`,
+                    });
+                  })
+                  .catch((error) => {
+                    res.status(500).send({
+                      success: false,
+                      message: "Ton groupe n'a pas pu être créé.",
+                      error,
+                    });
+                  });
               })
               .catch((error) => {
                 res.status(500).send({
@@ -239,15 +253,29 @@ const deleteEventGroup = async (req, res) => {
   const { eventId } = req.body;
 
   if (eventId) {
-    EventGroup.findOneAndDelete({
-      event: eventId,
-      creator: req.user._id,
-    })
-      .then((deletedGroup) => {
-        res.status(500).send({
-          success: true,
-          message: `Ton groupe ${deletedGroup.name} a bien été supprimé.`,
-        });
+    Event.findOneAndUpdate(
+      { _id: eventId },
+      { $inc: { createdGroupsTotal: -1 } }
+    )
+      .then(() => {
+        EventGroup.findOneAndDelete({
+          event: eventId,
+          creator: req.user._id,
+        })
+          .then((deletedGroup) => {
+            res.status(500).send({
+              success: true,
+              message: `Ton groupe ${deletedGroup.name} a bien été supprimé.`,
+            });
+          })
+          .catch((error) => {
+            res.status(500).send({
+              success: false,
+              message:
+                "Un problème s'est produit lors de la suppression du groupe.",
+              error,
+            });
+          });
       })
       .catch((error) => {
         res.status(500).send({

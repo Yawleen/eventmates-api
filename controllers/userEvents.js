@@ -105,28 +105,42 @@ const deleteUserEvent = async (req, res) => {
           .then((userGroup) => {
             if (userGroup) {
               if (req.user._id == userGroup.creator._id) {
-                EventGroup.deleteOne({
-                  _id: userGroup._id,
-                })
+                Event.findOneAndUpdate(
+                  { _id: eventId },
+                  { $inc: { createdGroupsTotal: -1 } }
+                )
                   .then(() => {
-                    const updatedEvents = user.events.filter(
-                      (event) => event.toString() !== eventId
-                    );
+                    EventGroup.deleteOne({
+                      _id: userGroup._id,
+                    })
+                      .then(() => {
+                        const updatedEvents = user.events.filter(
+                          (event) => event.toString() !== eventId
+                        );
 
-                    user.events = updatedEvents;
-                    user
-                      .save()
-                      .then(() =>
-                        res.status(200).send({
-                          success: true,
-                          message: `Tu ne participes plus à cet événement et ton groupe ${userGroup.name} a été supprimé.`,
-                        })
-                      )
+                        user.events = updatedEvents;
+                        user
+                          .save()
+                          .then(() =>
+                            res.status(200).send({
+                              success: true,
+                              message: `Tu ne participes plus à cet événement et ton groupe ${userGroup.name} a été supprimé.`,
+                            })
+                          )
+                          .catch((error) => {
+                            res.status(500).send({
+                              success: false,
+                              message:
+                                "Impossible de prendre en compte ta demande de suppression.",
+                              error,
+                            });
+                          });
+                      })
                       .catch((error) => {
                         res.status(500).send({
                           success: false,
                           message:
-                            "Impossible de prendre en compte ta demande de suppression.",
+                            "Un problème s'est produit lors de la suppression du groupe.",
                           error,
                         });
                       });
