@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     trim: true,
     required: [true, "Saisis un pseudo."],
-    unique: [true, "Le pseudo saisi existe déjà."],
+    unique: true,
   },
   firstName: {
     type: String,
@@ -30,7 +30,7 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    unique: [true, "L'adresse mail saisie existe déjà."],
+    unique: true,
     lowercase: true,
     validate: {
       validator: (value) => validator.isEmail(value),

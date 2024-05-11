@@ -10,6 +10,13 @@ const events = require("./routes/events");
 const genres = require("./routes/genres");
 const userEvents = require("./routes/userEvents");
 const isAnUserEvent = require("./routes/isAnUserEvent");
+const eventGroups = require("./routes/eventGroups");
+const isUserInGroup = require("./routes/isUserInGroup");
+const kickUser = require("./routes/kickUser");
+const eventGroup = require("./routes/eventGroup");
+const banUser = require("./routes/banUser");
+const joinGroup = require("./routes/joinGroup");
+const leaveGroup = require("./routes/leaveGroup");
 const db = require("./services/db");
 
 // Configuration de l'application
@@ -44,6 +51,13 @@ app.use("/events", events);
 app.use("/genres", genres);
 app.use("/user-events", userEvents);
 app.use("/is-an-user-event", isAnUserEvent);
+app.use("/event-groups", eventGroups);
+app.use("/is-user-in-group", isUserInGroup);
+app.use("/kick-user", kickUser);
+app.use("/event-group", eventGroup);
+app.use("/ban-user", banUser);
+app.use("/join-group", joinGroup);
+app.use("/leave-group", leaveGroup);
 
 // Gestion des erreurs
 app.use((req, res, next) => {

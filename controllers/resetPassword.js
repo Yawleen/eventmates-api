@@ -18,11 +18,13 @@ const resetPassword = async (req, res) => {
       User.updateOne({ _id: req.user._id }, { password: hashedPassword })
         .then(() => {
           res.status(200).send({
+            success: true,
             message: "Ton mot de passe a été mis à jour avec succès.",
           });
         })
         .catch((error) => {
           res.status(500).send({
+            success: false,
             message:
               "Un problème s'est produit lors de la mise à jour du mot de passe.",
             error,
@@ -31,6 +33,7 @@ const resetPassword = async (req, res) => {
     })
     .catch((error) => {
       res.status(500).send({
+        success: false,
         message: "Le mot de passe n'a pas été haché avec succès.",
         error,
       });
