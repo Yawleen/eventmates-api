@@ -8,13 +8,13 @@ const addUserEvent = async (req, res) => {
 
   if (eventId) {
     User.findOne({ _id: req.user._id })
-      .then((user) => {
+      .then(() => {
         Event.findOne({ _id: eventId })
           .then((event) => {
             UserEvents.findOneAndUpdate(
-              { user: user },
+              { user: req.user._id },
               { $addToSet: { events: event } },
-              { upsert: true, new: true }
+              { upsert: true }
             )
               .then(() => {
                 res.status(200).send({
