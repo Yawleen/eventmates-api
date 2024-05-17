@@ -107,7 +107,8 @@ const deleteUserEvent = async (req, res) => {
               if (JSON.stringify(req.user._id) === JSON.stringify(userGroup.creator._id)) {
                 Event.findOneAndUpdate(
                   { _id: eventId },
-                  { $inc: { createdGroupsTotal: -1 } }
+                  { $inc: { createdGroupsTotal: -1 } },
+                  { runValidators: true }
                 )
                   .then(() => {
                     EventGroup.deleteOne({

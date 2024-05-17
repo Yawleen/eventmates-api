@@ -30,7 +30,8 @@ const addEventGroup = async (req, res) => {
 
             Event.findOneAndUpdate(
               { _id: eventId },
-              { $inc: { createdGroupsTotal: 1 } }
+              { $inc: { createdGroupsTotal: 1 } },
+              { runValidators: true }
             )
               .then(() => {
                 const newEventGroup = new EventGroup({
@@ -255,7 +256,8 @@ const deleteEventGroup = async (req, res) => {
   if (eventId) {
     Event.findOneAndUpdate(
       { _id: eventId },
-      { $inc: { createdGroupsTotal: -1 } }
+      { $inc: { createdGroupsTotal: -1 } },
+      { runValidators: true }
     )
       .then(() => {
         EventGroup.findOneAndDelete({
