@@ -93,10 +93,6 @@ const eventSchema = new mongoose.Schema({
   url: {
     type: String,
   },
-  expirationDate: {
-    type: Date,
-    // expires: 0,
-  },
   createdGroupsTotal: {
     type: Number,
     default: 0,

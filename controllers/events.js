@@ -4,11 +4,13 @@ const Genre = require("../models/genre");
 const getEvents = async (req, res) => {
   const page = req.query.page ? req.query.page : 1;
   const limit = 10;
-  let search = {};
+  const currentDate = new Date();
+  let search = { "dates.start.dateTime": { $gte: currentDate } };
   let sort = { "priceRanges.min": 1, _id: 1 };
 
   if (req.query.eventName) {
     search = {
+      ...search,
       name: new RegExp(
         ["^", req.query.eventName.trim().replace(/\s{2,}/g, " ")].join(""),
         "i"
