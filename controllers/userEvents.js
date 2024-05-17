@@ -104,7 +104,7 @@ const deleteUserEvent = async (req, res) => {
         })
           .then((userGroup) => {
             if (userGroup) {
-              if (req.user._id == userGroup.creator._id) {
+              if (JSON.stringify(req.user._id) === JSON.stringify(userGroup.creator._id)) {
                 Event.findOneAndUpdate(
                   { _id: eventId },
                   { $inc: { createdGroupsTotal: -1 } }
@@ -115,7 +115,7 @@ const deleteUserEvent = async (req, res) => {
                     })
                       .then(() => {
                         const updatedEvents = user.events.filter(
-                          (event) => event.toString() !== eventId
+                          (event) => event._id.toString() !== eventId
                         );
 
                         user.events = updatedEvents;
@@ -157,7 +157,7 @@ const deleteUserEvent = async (req, res) => {
               }
 
               const updatedUsers = userGroup.users.filter(
-                (user) => user.toString() !== req.user._id
+                (user) => JSON.stringify(user._id) !== JSON.stringify(req.user._id)
               );
 
               userGroup.users = updatedUsers;
@@ -165,7 +165,7 @@ const deleteUserEvent = async (req, res) => {
                 .save()
                 .then(() => {
                   const updatedEvents = user.events.filter(
-                    (event) => event.toString() !== eventId
+                    (event) => event._id.toString() !== eventId
                   );
 
                   user.events = updatedEvents;
@@ -198,7 +198,7 @@ const deleteUserEvent = async (req, res) => {
             }
 
             const updatedEvents = user.events.filter(
-              (event) => event.toString() !== eventId
+              (event) => event._id.toString() !== eventId
             );
 
             user.events = updatedEvents;
