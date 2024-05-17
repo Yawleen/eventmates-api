@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-require('./genre');
+require("./genre");
 
 const eventSchema = new mongoose.Schema({
   eventId: {
@@ -19,10 +19,6 @@ const eventSchema = new mongoose.Schema({
       type: String,
     },
   },
-  // promoter: {
-  //   type: String,
-  // },
-  // promoters: [{ name: { type: String } }],
   dates: {
     start: {
       localDate: {
@@ -103,8 +99,11 @@ const eventSchema = new mongoose.Schema({
   },
   createdGroupsTotal: {
     type: Number,
-    default: 0
-  }
+    default: 0,
+    validate: {
+      validator: (value) => value >= 0,
+    },
+  },
 });
 
 module.exports = mongoose.model("Events", eventSchema);
