@@ -110,7 +110,6 @@ const saveNewEvent = async (event, genre) => {
       accessibilty: event.accessibility.info,
     }),
     url: event?.url,
-    expirationDate: event?.dates?.start?.dateTime,
   });
 
   newEvent
