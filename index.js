@@ -1,6 +1,8 @@
 require("dotenv").config();
 const express = require("express");
+const http = require("http");
 const bodyParser = require("body-parser");
+const socketIo = require("socket.io");
 const root = require("./routes/root");
 const auth = require("./routes/auth");
 const logout = require("./routes/logout");
@@ -17,11 +19,14 @@ const eventGroup = require("./routes/eventGroup");
 const banUser = require("./routes/banUser");
 const joinGroup = require("./routes/joinGroup");
 const leaveGroup = require("./routes/leaveGroup");
+const messages = require("./routes/messages");
 const db = require("./services/db");
 
 // Configuration de l'application
 const app = express();
 const port = process.env.PORT || 3000; // Port d'écoute par défaut
+const server = http.createServer(app);
+const io = socketIo(server);
 
 // Middleware
 app.use(bodyParser.json());
@@ -58,6 +63,7 @@ app.use("/event-group", eventGroup);
 app.use("/ban-user", banUser);
 app.use("/join-group", joinGroup);
 app.use("/leave-group", leaveGroup);
+app.use("/group-messages", messages);
 
 // Gestion des erreurs
 app.use((req, res, next) => {
@@ -79,7 +85,24 @@ db.on("error", (err) => {
 });
 db.once("open", () => {
   console.log("Connexion à la base de données établie");
-  app.listen(port, () => {
+
+  // WebSocket connection
+  io.on("connection", (socket) => {
+    socket.on("disconnect", () => {
+      console.log("Utilisateur déconnecté");
+    });
+
+    socket.on("sendMessage", async (data) => {
+      const { senderId, content, eventGroupId } = data;
+      const message = new Message({ eventGroup: eventGroupId, sender: senderId, content });
+      await message.save();
+      
+      const populatedMessage = await message.populate('sender').execPopulate();
+      io.emit('message', populatedMessage);
+    });
+  });
+
+  server.listen(port, () => {
     console.log(`Serveur écoutant sur le port ${port}`);
   });
 });
