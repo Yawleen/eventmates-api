@@ -46,11 +46,6 @@ const userSchema = new mongoose.Schema({
   birthdate: { type: Date, required: true },
   gender: { type: String, enum: ["h", "f", "n"], required: true },
   description: { type: String, maxlength: 200, default: null },
-  media: {
-    type: Schema.Types.ObjectId,
-    ref: "Media",
-    default: null,
-  },
   createdAt: {
     type: Date,
     default: Date.now,
