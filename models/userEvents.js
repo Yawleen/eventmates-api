@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 require("./user");
 require("./event");
 
-const userEventsSchema = new mongoose.Schema({
+const userEventsSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "Users",

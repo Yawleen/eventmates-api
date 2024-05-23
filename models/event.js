@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 require("./genre");
 
-const eventSchema = new mongoose.Schema({
+const eventSchema = new Schema({
   eventId: {
     type: String,
     unique: true,
