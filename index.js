@@ -20,6 +20,8 @@ const banUser = require("./routes/banUser");
 const joinGroup = require("./routes/joinGroup");
 const leaveGroup = require("./routes/leaveGroup");
 const messages = require("./routes/messages");
+const createdGroupChat = require("./routes/createdGroupChat");
+const joinedGroupChat = require("./routes/joinedGroupChat");
 const db = require("./services/db");
 
 // Configuration de l'application
@@ -64,6 +66,8 @@ app.use("/ban-user", banUser);
 app.use("/join-group", joinGroup);
 app.use("/leave-group", leaveGroup);
 app.use("/group-messages", messages);
+app.use("/created-group-chat", createdGroupChat);
+app.use("/joined-group-chat", joinedGroupChat);
 
 // Gestion des erreurs
 app.use((req, res, next) => {
