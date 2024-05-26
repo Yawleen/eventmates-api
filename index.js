@@ -111,15 +111,10 @@ db.once("open", () => {
         });
         await message.save();
 
-        const populatedMessage = await message
-          .populate({
-            path: "eventGroup",
-            populate: [
-              { path: "creator", select: "username" },
-              { path: "users", select: "username" },
-            ],
-          })
-          .populate("sender", "username online");
+        const populatedMessage = await message.populate(
+          "sender",
+          "username online"
+        );
         io.emit("message", populatedMessage);
       } catch (error) {
         console.error("Erreur lors de l'envoi du message :", error);

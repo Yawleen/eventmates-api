@@ -2,13 +2,9 @@ const Message = require("../models/message");
 const EventGroup = require("../models/eventGroups");
 
 const getGroupMessages = async (req, res) => {
-  const page = req.query.page ? req.query.page : 1;
-  const limit = 10;
-  const eventGroupId = req.query.eventGroupId;
+  const { eventGroupId } = req.query;
 
   if (eventGroupId) {
-    const count = await Message.countDocuments({ eventGroup: eventGroupId });
-
     EventGroup.findOne({
       _id: eventGroupId,
       users: req.user._id,
@@ -16,16 +12,11 @@ const getGroupMessages = async (req, res) => {
       .then(() => {
         Message.find({ eventGroup: eventGroupId })
           .sort({ timestamp: 1, _id: -1 })
-          .skip((page - 1) * limit)
-          .limit(limit)
-          .populate("sender")
+          .populate("sender", "username online")
           .exec()
           .then((messages) => {
             res.status(200).send({
               messages,
-              nbOfMessages: count,
-              currentPage: page,
-              totalPage: Math.ceil(count / limit),
             });
           })
           .catch((error) => {
