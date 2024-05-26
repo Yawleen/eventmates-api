@@ -1,8 +1,8 @@
 require("dotenv").config();
 const express = require("express");
-const http = require("http");
+const { createServer } = require('node:http');
 const bodyParser = require("body-parser");
-const socketIo = require("socket.io");
+const { Server } = require("socket.io");
 const root = require("./routes/root");
 const auth = require("./routes/auth");
 const logout = require("./routes/logout");
@@ -22,13 +22,20 @@ const leaveGroup = require("./routes/leaveGroup");
 const messages = require("./routes/messages");
 const createdGroupChat = require("./routes/createdGroupChat");
 const joinedGroupChat = require("./routes/joinedGroupChat");
+const Message = require("./models/message");
 const db = require("./services/db");
 
 // Configuration de l'application
 const app = express();
 const port = process.env.PORT || 3000; // Port d'écoute par défaut
-const server = http.createServer(app);
-const io = socketIo(server);
+const server = createServer(app);
+const io = new Server(server, {
+  path: "/socket",
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  },
+});
 
 // Middleware
 app.use(bodyParser.json());
@@ -92,17 +99,28 @@ db.once("open", () => {
 
   // WebSocket connection
   io.on("connection", (socket) => {
-    socket.on("disconnect", () => {
-      console.log("Utilisateur déconnecté");
-    });
+    console.log("Connexion au WebSocket établie");
 
     socket.on("sendMessage", async (data) => {
-      const { senderId, content, eventGroupId } = data;
-      const message = new Message({ eventGroup: eventGroupId, sender: senderId, content });
-      await message.save();
-      
-      const populatedMessage = await message.populate('sender').execPopulate();
-      io.emit('message', populatedMessage);
+      try {
+        const { senderId, content, eventGroupId } = data;
+        const message = new Message({
+          eventGroup: eventGroupId,
+          sender: senderId,
+          content,
+        });
+        console.log(message);
+        await message.save();
+
+        const populatedMessage = await message.populate("sender");
+        io.emit("message", populatedMessage);
+      } catch (error) {
+        console.error("Erreur lors de l'envoi du message :", error);
+      }
+    });
+
+    socket.on("disconnect", () => {
+      console.log("Déconnexion du WebSocket");
     });
   });
 
