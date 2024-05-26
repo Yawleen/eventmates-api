@@ -1,6 +1,6 @@
 require("dotenv").config();
 const express = require("express");
-const { createServer } = require('node:http');
+const { createServer } = require("node:http");
 const bodyParser = require("body-parser");
 const { Server } = require("socket.io");
 const root = require("./routes/root");
@@ -33,7 +33,7 @@ const io = new Server(server, {
   path: "/socket",
   cors: {
     origin: "*",
-    methods: ["GET", "POST"]
+    methods: ["GET", "POST"],
   },
 });
 
@@ -109,10 +109,17 @@ db.once("open", () => {
           sender: senderId,
           content,
         });
-        console.log(message);
         await message.save();
 
-        const populatedMessage = await message.populate("sender");
+        const populatedMessage = await message
+          .populate({
+            path: "eventGroup",
+            populate: [
+              { path: "creator", select: "username" },
+              { path: "users", select: "username" },
+            ],
+          })
+          .populate("sender", "username online");
         io.emit("message", populatedMessage);
       } catch (error) {
         console.error("Erreur lors de l'envoi du message :", error);
