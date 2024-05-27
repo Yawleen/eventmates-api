@@ -1,5 +1,6 @@
 const EventGroup = require("../models/eventGroups");
 const Event = require("../models/event");
+const Message = require("../models/message");
 
 const addEventGroup = async (req, res) => {
   const { eventId, name, description, maxCapacity } = req.body;
@@ -265,10 +266,21 @@ const deleteEventGroup = async (req, res) => {
           creator: req.user._id,
         })
           .then((deletedGroup) => {
-            res.status(500).send({
-              success: true,
-              message: `Ton groupe ${deletedGroup.name} a bien été supprimé.`,
-            });
+            Message.deleteMany({ eventGroup: deletedGroup._id })
+              .then(() => {
+                res.status(200).send({
+                  success: true,
+                  message: `Ton groupe ${deletedGroup.name} a bien été supprimé.`,
+                });
+              })
+              .catch((error) => {
+                res.status(500).send({
+                  success: false,
+                  message:
+                    "Un problème s'est produit lors de la suppression des messages du groupe.",
+                  error,
+                });
+              });
           })
           .catch((error) => {
             res.status(500).send({
