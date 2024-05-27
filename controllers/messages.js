@@ -12,7 +12,7 @@ const getGroupMessages = async (req, res) => {
       .then(() => {
         Message.find({ eventGroup: eventGroupId })
           .sort({ timestamp: 1, _id: -1 })
-          .populate("sender", "username online")
+          .populate("sender eventGroup")
           .exec()
           .then((messages) => {
             res.status(200).send({
