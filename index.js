@@ -22,6 +22,7 @@ const leaveGroup = require("./routes/leaveGroup");
 const messages = require("./routes/messages");
 const createdGroupChat = require("./routes/createdGroupChat");
 const joinedGroupChat = require("./routes/joinedGroupChat");
+const isUserOnline = require("./routes/isUserOnline");
 const Message = require("./models/message");
 const db = require("./services/db");
 
@@ -75,6 +76,7 @@ app.use("/leave-group", leaveGroup);
 app.use("/group-messages", messages);
 app.use("/created-group-chat", createdGroupChat);
 app.use("/joined-group-chat", joinedGroupChat);
+app.use("/is-user-online", isUserOnline);
 
 // Gestion des erreurs
 app.use((req, res, next) => {

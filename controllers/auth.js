@@ -142,4 +142,29 @@ const login = async (req, res) => {
     });
 };
 
-module.exports = { register, login };
+const isUserOnline = async (req, res) => {
+  const { userId } = req.body;
+
+  User.findOne({ _id: userId, online: true })
+    .then((user) => {
+      if (user) {
+        res.status(200).send({
+          isOnline: true,
+        });
+        return;
+      }
+
+      res.status(200).send({
+        isOnline: false,
+      });
+    })
+    .catch((error) => {
+      res.status(404).send({
+        isOnline: false,
+        message: "Impossible de vérifier si l'utilisateur est en ligne",
+        error,
+      });
+    });
+};
+
+module.exports = { register, login, isUserOnline };

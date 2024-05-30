@@ -72,6 +72,7 @@ const isAnUserEvent = async (req, res) => {
       })
       .catch((error) => {
         res.status(500).send({
+          isParticipant: false,
           message: "Impossible de vérifier ta participation à l'événement.",
           error,
         });
@@ -104,7 +105,10 @@ const deleteUserEvent = async (req, res) => {
         })
           .then((userGroup) => {
             if (userGroup) {
-              if (JSON.stringify(req.user._id) === JSON.stringify(userGroup.creator._id)) {
+              if (
+                JSON.stringify(req.user._id) ===
+                JSON.stringify(userGroup.creator._id)
+              ) {
                 Event.findOneAndUpdate(
                   { _id: eventId },
                   { $inc: { createdGroupsTotal: -1 } },
@@ -158,7 +162,8 @@ const deleteUserEvent = async (req, res) => {
               }
 
               const updatedUsers = userGroup.users.filter(
-                (user) => JSON.stringify(user._id) !== JSON.stringify(req.user._id)
+                (user) =>
+                  JSON.stringify(user._id) !== JSON.stringify(req.user._id)
               );
 
               userGroup.users = updatedUsers;
