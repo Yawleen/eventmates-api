@@ -167,10 +167,7 @@ const getEventGroups = async (req, res) => {
       ...selectedEvent,
       creator: { $ne: req.user._id },
       bannedUsers: { $ne: req.user._id },
-    })
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .populate("event creator users");
+    }).populate("event creator users");
 
     const availableGroups = otherGroups.filter(
       (group) => group.users.length < group.maxCapacity
@@ -181,7 +178,7 @@ const getEventGroups = async (req, res) => {
       : availableGroups;
 
     res.status(200).send({
-      groups,
+      groups: groups.slice((page - 1) * limit, (page - 1) * limit + limit),
       nbOfGroups: groups.length,
       currentPage: page,
       totalPage: Math.ceil(groups.length / limit),
