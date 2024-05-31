@@ -168,8 +168,8 @@ const getEventGroups = async (req, res) => {
       creator: { $ne: req.user._id },
       bannedUsers: { $ne: req.user._id },
     })
-      .limit(limit - 1)
       .skip((page - 1) * limit)
+      .limit(limit)
       .populate("event creator users");
 
     const availableGroups = otherGroups.filter(

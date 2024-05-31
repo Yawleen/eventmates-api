@@ -8,8 +8,8 @@ const getCreatedGroupChat = async (req, res) => {
     const createdGroups = await EventGroup.find({
       creator: req.user._id,
     })
-      .limit(limit - 1)
       .skip((page - 1) * limit)
+      .limit(limit)
       .populate("event users");
 
     res.status(200).send({
@@ -35,8 +35,8 @@ const getJoinedGroupChat = async (req, res) => {
       creator: { $ne: req.user._id },
       users: req.user._id,
     })
-      .limit(limit - 1)
       .skip((page - 1) * limit)
+      .limit(limit)
       .populate("event users");
 
     res.status(200).send({
