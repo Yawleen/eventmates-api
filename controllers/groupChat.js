@@ -4,19 +4,24 @@ const getCreatedGroupChat = async (req, res) => {
   const page = req.query.page ? req.query.page : 1;
   const limit = 10;
 
+  const search = {
+    creator: req.user._id,
+  };
+
   try {
-    const createdGroups = await EventGroup.find({
-      creator: req.user._id,
-    })
+    const createdGroups = await EventGroup.find(search)
       .skip((page - 1) * limit)
       .limit(limit)
       .populate("event users");
 
+    const count = await EventGroup.countDocuments(search);
+
+    console.log(createdGroups.length, count);
     res.status(200).send({
       createdGroups,
-      nbOfGroups: createdGroups.length,
+      nbOfGroups: count,
       currentPage: page,
-      totalPage: Math.ceil(createdGroups.length / limit),
+      totalPage: Math.ceil(count / limit),
     });
   } catch (error) {
     res.status(500).send({
@@ -30,20 +35,21 @@ const getJoinedGroupChat = async (req, res) => {
   const page = req.query.page ? req.query.page : 1;
   const limit = 10;
 
+  const search = { creator: { $ne: req.user._id }, users: req.user._id };
+
   try {
-    const joinedGroups = await EventGroup.find({
-      creator: { $ne: req.user._id },
-      users: req.user._id,
-    })
+    const joinedGroups = await EventGroup.find(search)
       .skip((page - 1) * limit)
       .limit(limit)
       .populate("event users");
 
+    const count = await EventGroup.countDocuments(search);
+
     res.status(200).send({
       joinedGroups,
-      nbOfGroups: joinedGroups.length,
+      nbOfGroups: count,
       currentPage: page,
-      totalPage: Math.ceil(joinedGroups.length / limit),
+      totalPage: Math.ceil(count / limit),
     });
   } catch (error) {
     res.status(500).send({
