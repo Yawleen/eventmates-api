@@ -160,12 +160,12 @@ const getEventGroups = async (req, res) => {
 
     const userGroup = await EventGroup.findOne({
       ...selectedEvent,
-      creator: req.user._id,
+      users: req.user._id,
     }).populate("event creator users");
 
     const otherGroups = await EventGroup.find({
       ...selectedEvent,
-      creator: { $ne: req.user._id },
+      users: { $ne: req.user._id },
       bannedUsers: { $ne: req.user._id },
     }).populate("event creator users");
 
